@@ -53,6 +53,22 @@
                                             </textarea>
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="description">Short Description</label>
+                                            <textarea name="short_description" id="short_description" cols="30" rows="10" class="summernote" placeholder="">
+                                                {{$product->short_description}}
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="description">Shipping and Returns</label>
+                                            <textarea name="shipping_returns" id="shipping_returns" cols="30" rows="10" class="summernote" placeholder="Description">
+                                                {{$product->shipping_returns}}
+                                            </textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -69,9 +85,9 @@
                         <div class="row" id="product-gallery">
                                 @if($productImage->isNotEmpty())
                                     @foreach($productImage as $image)
-                                    <div class="col-md-3" id="image-row-${{$image->id}}">
+                                    <div class="col-md-3" id="image-row-{{$image->id}}">
                                         <div class="card">
-                                            <input type="hidden" name="image_array[]" value="${{$image->id}}">
+                                            <input type="hidden" name="image_array[]" value="{{$image->id}}">
                                             <img class="card-img-top" src="{{asset('uploads/product/small/'. $image->image )}}" alt="">
                                             <div class="card-body">
                                                 <a href="javascript:void(0)" onclick="deleteImage({{$image->id}})" class="btn btn-danger">Delete</a>
@@ -224,6 +240,21 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Related Products</h2>
+                                <div class="mb-3">
+                                    <select multiple name="related-products[]"  id="related_products" class="form-control ">
+{{--                                        @if(!empty($relatedProducts))--}}
+{{--                                            @foreach($relatedProducts as $relProduct)--}}
+{{--                                                <option value="{{$relProduct->id}}">{{$relProduct->title}}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        @endif--}}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -241,6 +272,20 @@
 
 @section('customJs')
     <script>
+        {{--$('.related-product').select2({--}}
+        {{--   ajax:{--}}
+        {{--       url : '{{route("product.getProducts")}}',--}}
+        {{--       dataType : 'json',--}}
+        {{--       tags : true,--}}
+        {{--       multiple : true,--}}
+        {{--       minimumInputLength : 3,--}}
+        {{--       processResults : function (data){--}}
+        {{--           return {--}}
+        {{--             result : data.tags--}}
+        {{--           };--}}
+        {{--       }--}}
+        {{--   }--}}
+        {{--});--}}
         $('#title').change(function (){
             element = $(this);
             $("button[type=submit]").prop('disabled',true);

@@ -77,13 +77,15 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brand_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->shipping_returns = $request->shipping_returns;
+            $product->short_description = $request->short_description;
             $product->save();
 
             // Save Gallery Pics
             if(!empty($request->image_array)){
                 foreach ($request->image_array as $temp_image_id){
-                    $tempImageInfor = TempImage::find($temp_image_id);
-                    $extArray = explode('.',$tempImageInfor->name);
+                    $tempImageInfo = TempImage::find($temp_image_id);
+                    $extArray = explode('.',$tempImageInfo->name);
                     // 12123124.jpg
                     $ext = last($extArray); // like jpg.gif,png, ext
 
@@ -99,7 +101,7 @@ class ProductController extends Controller
                     // Generate Product Thumbnails
 
                     // Large Image
-                    $sourcePath = public_path(). '/temp/'. $tempImageInfor->name;
+                    $sourcePath = public_path(). '/temp/'. $tempImageInfo->name;
                     $destPath = public_path(). '/uploads/product/large/'. $imageName;
 
                     $manager = new ImageManager(new Driver());
@@ -145,6 +147,11 @@ class ProductController extends Controller
 
          $subCategories = SubCategory::where('category_id',$product->category_id)->get();
 
+         if($product->related_products != ''){
+             $productArray = explode(',',$product->related_products);
+             $relatedProducts = Product::whereIn('id',$productArray)->get();
+         }
+
          $data = [];
 
          $categories = Category::orderBy('name','ASC')->get();
@@ -154,6 +161,7 @@ class ProductController extends Controller
          $data['product'] = $product;
          $data['subCategories'] = $subCategories;
          $data['productImage'] = $productImage;
+//         $data['relatedProducts'] = $relatedProducts;
          return view('admin.products.edit',$data);
      }
 
@@ -194,14 +202,18 @@ class ProductController extends Controller
              $product->sub_category_id = $request->sub_category;
              $product->brand_id = $request->brand;
              $product->is_featured = $request->is_featured;
+             $product->shipping_returns = $request->shipping_returns;
+             $product->short_description = $request->short_description;
+             $product->related_products = (!empty($request->related_products)) ? implode(',',$request->related_products) : "";
              $product->save();
 
              // Save Gallery Pics
              if(!empty($request->image_array)){
                  foreach ($request->image_array as $temp_image_id){
-                     $tempImageInfor = TempImage::find($temp_image_id);
-                     $extArray = explode('.',$tempImageInfor->name);
+                     $tempImageInfo = TempImage::find($temp_image_id);
+                     $extArray = explode('.',$tempImageInfo->name);
                      // 12123124.jpg
+
                      $ext = last($extArray); // like jpg.gif,png, ext
 
                      $productImage = new ProductImage();
@@ -210,29 +222,30 @@ class ProductController extends Controller
                      $productImage->save();
 
                      $imageName = $product->id. '-' .$productImage->id . '-' . time() .  '.' . $ext;
-                     // product_id => 4; product_image_id => 1
-                     // 4-1-12123124.jpg
                      $productImage->image = $imageName;
                      $productImage->save();
 
                      // Generate Product Thumbnails
 
                      // Large Image
-                     $sourcePath = public_path(). '/temp/'. $tempImageInfor->name;
+                     $sourcePath = public_path(). '/temp/'. $tempImageInfo->name;
                      $destPath = public_path(). '/uploads/product/large/'. $imageName;
-                     $image = Image::read($sourcePath);
-                     $image->scaleDown(1400,null);
-                     $image->save($destPath);
-                     // Small Image
 
+                     $manager = new ImageManager(new Driver());
+                     $image = $manager->read($sourcePath);
+                     $image->scaleDown(1400);
+                     $image->save($destPath);
+
+                     // Small Image
                      $destPath = public_path(). '/uploads/product/small/'. $imageName;
-                     $image = Image::read($sourcePath);
-                     $image->cover(300, 300);
+
+                     $manager = new ImageManager(new Driver());
+                     $image = $manager->read($sourcePath);
+                     $image->cover(300,275);
                      $image->save($destPath);
                  }
              }
-
-             $request->session()->flash('success','Product Updated successfully');
+             $request->session()->flash('success','Product updated successfully');
 
              return response()->json([
                  'status' => true,
@@ -277,6 +290,24 @@ class ProductController extends Controller
                  'status' => true,
                  'message' => 'Product deleted successfully',
          ]);
+     }
 
+     public function getProducts(Request $request)
+     {
+         $temProduct = [];
+        if($request->term != ""){
+            $products = Product::where('title','like','%'. $request->term.'%')->get();
+
+            if($products != null){
+                foreach ($products as $product){
+                    $tempProduct[] = array('id' => $product->id, 'text' => $product->title);
+                }
+            }
+
+            return response()->json([
+                'tags' => $tempProduct,
+                'status' => true
+            ]);
+        }
      }
 }

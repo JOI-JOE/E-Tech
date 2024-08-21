@@ -16,17 +16,19 @@ class TempImagesController extends Controller
         if($request->image){
             $image = $request->image;
             $ext = $image->getClientOriginalExtension();
-            $newFileName = time() . '.' .  $ext;
+
 
             $tempImage = new TempImage();
-            $tempImage->name = $newFileName;
+            $tempImage->name = 'TEST';
             $tempImage->save();
 
-            $image->move(public_path('/temp') , $newFileName);
+            $newName = $tempImage->id. '-' .time(). '.' .$ext;
+
+            $image->move(public_path('/temp') , $newName);
 
             $manager = new ImageManager(new Driver());
-            $sourcePath = public_path() . '/temp/' . $newFileName;
-            $destPath = public_path(). '/temp/thumb/' .$newFileName;
+            $sourcePath = public_path() . '/temp/' . $newName;
+            $destPath = public_path(). '/temp/thumb/' .$newName;
             $image = $manager->read($sourcePath);
             $image->cover(300,275);
             $image->save($destPath);

@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.guest' => \App\Http\Middleware\AdminRedirectAuthenticated::class,
             'admin.auth' => \App\Http\Middleware\AdminAuthenticate::class,
+            'auth' => \App\Http\Middleware\Authenticate::class,
+            'guest' => \App\Http\Middleware\RedirectAuthenticated::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

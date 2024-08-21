@@ -129,6 +129,7 @@ class CategoryController extends Controller
                 $ext = last($extArray);
 
                 $newImageName = $category->id . '-' . time(). '.' . $ext;
+
                 $sourcePath = public_path() . '/temp/' . $tempImage->name;
                 $dPath = public_path() . '/uploads/category/' . $newImageName;
                 File::copy($sourcePath, $dPath);
