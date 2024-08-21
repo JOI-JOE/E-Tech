@@ -30,6 +30,7 @@ Route::post('/update-cart',[CartController::class,'updateCart'])->name('front.up
 Route::post('/delete-item',[CartController::class,'deleteItem'])->name('front.deleteItem.cart');
 Route::get('/checkout',[CartController::class,'checkout'])->name('front.checkout');
 Route::post('/process-checkout',[CartController::class,'processCheckout'])->name('front.processCheckout');
+Route::get('/thanks/{orderId}',[CartController::class,'thankyou'])->name('front.thanks');
 
 Route::group(['prefix' => '/account'],function (){
     Route::group(['middleware' => 'guest'],function (){
@@ -41,11 +42,11 @@ Route::group(['prefix' => '/account'],function (){
         Route::get('/register',[AuthController::class,'register'])->name('account.register');
         Route::post('/process-register',[AuthController::class,'processRegister'])->name('account.processRegister');
 
-        //Logout
     });
 
     Route::group(['middleware' => 'auth'],function (){
         Route::get('/profile',[AuthController::class,'profile'])->name('account.profile');
+        //Logout
         Route::get('/logout',[AuthController::class,'logout'])->name('account.logout');
     });
 });

@@ -17,10 +17,6 @@ class AdminAuthenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-//        if (Auth::guard('admin')->check()) { // Check if admin user is authenticated
-//            return $next($request); // Allow access to protected routes
-//        }
-//        return redirect()->route('admin.login');
         return $next($request); // Allow access to protected routes
 
     }
