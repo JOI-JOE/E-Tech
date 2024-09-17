@@ -98,14 +98,11 @@
                                             <div>Subtotal</div>
                                             <div>${{\Gloudemans\Shoppingcart\Facades\Cart::subtotal()}}</div>
                                         </div>
-                                        <div class="d-flex justify-content-between pb-2">
-                                            <div>Shipping</div>
-                                            <div>$20</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between summery-end">
-                                            <div>Total</div>
-                                            <div>${{\Gloudemans\Shoppingcart\Facades\Cart::subtotal()}}</div>
-                                        </div>
+
+{{--                                        <div class="d-flex justify-content-between summery-end">--}}
+{{--                                            <div>Total</div>--}}
+{{--                                            <div>${{\Gloudemans\Shoppingcart\Facades\Cart::subtotal()}}</div>--}}
+{{--                                        </div>--}}
                                         <div class="pt-5">
                                             <a href="{{route('front.checkout')}}" class="btn-dark btn btn-block w-100">Proceed to Checkout</a>
                                         </div>
